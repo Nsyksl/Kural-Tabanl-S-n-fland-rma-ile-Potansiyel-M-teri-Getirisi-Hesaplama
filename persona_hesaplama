@@ -120,11 +120,11 @@ def persona_hesapla():
   new_user = ""
   if yas < 18:
     yas_cat = yas_cat[0]
-  elif yas > 18 and yas < 23:
+  elif yas > 18 and yas <= 23:
     yas_cat = yas_cat[1]
-  elif yas > 23 and yas < 30:
+  elif yas > 23 and yas <= 30:
     yas_cat = yas_cat[2]
-  elif yas > 30 and yas < 40:
+  elif yas > 30 and yas <= 40:
     yas_cat = yas_cat[3]
   elif yas > 40 :
     yas_cat = yas_cat[4]
