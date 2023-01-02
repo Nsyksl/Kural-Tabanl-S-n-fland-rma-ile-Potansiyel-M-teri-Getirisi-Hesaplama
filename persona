@@ -1,0 +1,123 @@
+#Kural Tabanlı Sınıflandırma ile Potansiyel Müşteri Getirisi Hesaplama
+Persona.csv veri seti uluslararası bir oyun şirketinin sattığı ürünlerin fiyatlarını ve bu ürünleri satın alan kullanıcıların bazı demografik bilgilerini barındırmaktadır. Veri seti her satış işleminde oluşan kayıtlardan meydana gelmektedir. Bunun anlamı tablo tekilleştirilmemiştir. 
+Diğer bir ifade ile belirli demografik özelliklere sahip bir kullanıcı birden fazla alışveriş yapmış olabilir.
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+df = pd.read_csv("persona.csv")
+pd.set_option("display.max_columns", None)
+pd.set_option("display.width", 500)
+pd.set_option("display.max_rows", None)
+
+
+#Veri setimizi hızlıca tanıyabilmek için meet_df adında bir fonksiyon oluşturuyoruz.
+
+def meet_df(dataframe, head=5):
+  print("######### SHAPE ###########")
+  print(dataframe.shape)
+  print("######## Types #######")
+  print(dataframe.dtypes)
+  print("######## HEAD #########")
+  print(dataframe.head(head))
+  print("######### TAİL ########")
+  print(dataframe.tail(head))
+  print("######## Boş Değerler #####")
+  print(dataframe.isnull().sum())
+  
+  meet_df(df)
+  
+  **Değişkenler**
+PRICE – Müşterinin harcama tutarı
+SOURCE – Müşterinin bağlandığı cihaz türü
+SEX – Müşterinin cinsiyeti
+COUNTRY – Müşterinin ülkesi
+AGE – Müşterinin yaşı
+
+
+*Değişkenlerimizi TANIYALIM!*
+
+df["SOURCE"].nunique()
+
+df["SOURCE"].value_counts()
+
+df["PRICE"].nunique()
+
+df["PRICE"].value_counts()
+
+df["COUNTRY"].value_counts()    #df.groupby("COUNTRY")["PRICE"].count()
+
+df.groupby("COUNTRY")["PRICE"].sum()
+
+df.groupby("COUNTRY").agg({"PRICE": "mean"})       #df.groupby("COUNTRY")["PRICE"].mean()
+
+df.groupby("SOURCE").agg({"PRICE": "mean"})        #df.groupby("SOURCE")["PRICE"].mean()
+
+df.groupby(["COUNTRY", "SOURCE"]).agg({"PRICE": "mean"})
+
+df.groupby(["COUNTRY", "SOURCE", "SEX", "AGE"]).agg({"PRICE": "mean"}).head()
+
+agg_df = df.groupby(["COUNTRY", "SOURCE", "SEX", "AGE"]).agg({"PRICE": "mean"}).sort_values("PRICE" , ascending=False)
+
+agg_df.head()
+
+agg_df = agg_df.reset_index()  
+
+**Yaş değişkeni kategorik olmadığı için kategori haline getirdikten sonra agg_df'e ekleyelim.**
+
+df["AGE"].describe()
+bins = [0,18,23,30,40, agg_df["AGE"].max()]
+mylabels = ["0_18", "19_23", "24_30", "31_40", "41_" + str(agg_df["AGE"].max())]
+agg_df["AGE_CAT"] = pd.cut(agg_df["AGE"], bins, labels=mylabels)
+agg_df.head()
+
+**customer_level_based adında yeni müşteri persona bilgilerini içeren yeni bir değişken oluşturalım.**
+
+agg_df["customer_level_based"] = [row[0].upper() + "_"+ row[1].upper() + "_"+ row[2].upper() +"_"+ row[5].upper() for row in agg_df.values]
+
+**Yeni müşteri bilgilerini PRICE'a göre 4 segmente ayıralım.**
+
+agg_df["SEGMENT"] = pd.qcut(agg_df["PRICE"], 4, labels=["D", "C", "B", "A"])
+
+**Gereksiz değişkenleri kaldıralım.**
+agg_df = agg_df[["customer_level_based", "PRICE"]]
+
+for i in agg_df["customer_level_based"].values:
+                print(i.split("_"))
+
+agg_df = agg_df.groupby("customer_level_based").agg({"PRICE": "mean"})
+agg_df["customer_level_based"].value_counts()
+agg_df = agg_df.reset_index()
+
+
+agg_df["SEGMENT"] = pd.qcut(agg_df["PRICE"], 4, labels=["D", "C", "B", "A"])
+
+agg_df.groupby("SEGMENT").agg({"PRICE" : ["mean", "max", "sum"]})
+
+***Yeni bir persona belirliyoruz ve veri setinde karşılık gelen personanın ortalama harcama tutarına göre segmentliyoruz.***
+
+# Örnek personalar
+new_user = "TUR_ANDROID_FEMALE_24_30"
+new_user2 = "BRA_IOS_MALE_24_30"
+
+agg_df[agg_df["customer_level_based"] == new_user]
+
+agg_df[agg_df["customer_level_based"] == new_user2]
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
