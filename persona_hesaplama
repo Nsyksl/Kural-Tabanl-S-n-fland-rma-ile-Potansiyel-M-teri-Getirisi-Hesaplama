@@ -112,11 +112,12 @@ agg_df[agg_df["customer_level_based"] == new_user2]
 
 
 def persona_hesapla():
-  country = str(input("Lütfen ülkenizi yazınız.  ")).upper()
-  source = str(input("Lütfen IOS yada ANDROID şeklinde yazınız.  ")).upper()
-  sex = str(input("Lütfen cinsiyeti FEMALE / MALE şeklinde yazınız.  ")).upper()
+  ulke = str(input("Lütfen ülkenizi yazınız.  ")).upper()
+  kaynak = str(input("Lütfen IOS yada ANDROID şeklinde yazınız.  ")).upper()
+  cinsiyet = str(input("Lütfen cinsiyeti FEMALE / MALE şeklinde yazınız.  ")).upper()
   yas = int(input("Lütfen yaşınızı giriniz.  "))
-  age_cat = ["0_18", "19_23", "24_30", "31_40", "41_70"]
+  yas_cat = ["0_18", "19_23", "24_30", "31_40", "41_66"]
+  new_user = ""
   if yas < 18:
     yas_cat = yas_cat[0]
   elif yas > 18 and yas < 23:
@@ -127,8 +128,9 @@ def persona_hesapla():
     yas_cat = yas_cat[3]
   elif yas > 40 :
     yas_cat = yas_cat[4]
-
-  print(f"{country[0:3]}_{source}_{sex}_{age_cat} ")
+  return(f"{ulke[0:3]}_{kaynak}_{cinsiyet}_{yas_cat}")
+  
+  new_user = persona_hesapla()
 
  
 
