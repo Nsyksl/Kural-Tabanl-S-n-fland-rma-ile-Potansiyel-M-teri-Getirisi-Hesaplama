@@ -108,7 +108,7 @@ agg_df[agg_df["customer_level_based"] == new_user2]
 
 
 
-# Hızlı persona oluşturmak için bir fonksiyon yazabiliriz.
+# Hızlı persona oluşturmak için basit bir fonksiyon yazabiliriz.
 
 
 def persona_hesapla():
